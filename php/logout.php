@@ -7,8 +7,10 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use Dotenv\Dotenv;
 use Predis\Client;
 
+// Load .env locally if it exists.
+// Railway environment variables are used in production.
 $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
-$dotenv->load();
+$dotenv->safeLoad();
 
 try {
 
@@ -16,10 +18,12 @@ try {
 
     if ($token !== '') {
 
+        // Connect to Redis
         $redis = new Client([
             'scheme' => 'tcp',
-            'host'   => $_ENV['REDIS_HOST'] ?? '127.0.0.1',
-            'port'   => $_ENV['REDIS_PORT'] ?? 6379
+            'host' => $_ENV['REDIS_HOST'] ?? '127.0.0.1',
+            'port' => $_ENV['REDIS_PORT'] ?? 6379,
+            'password' => $_ENV['REDIS_PASSWORD'] ?? null
         ]);
 
         // Delete Redis session
@@ -32,7 +36,7 @@ try {
             [
                 'expires' => time() - 3600,
                 'path' => '/',
-                'secure' => false,
+                'secure' => true,
                 'httponly' => true,
                 'samesite' => 'Lax'
             ]

@@ -70,15 +70,12 @@ try {
     $sessionToken = bin2hex(random_bytes(32));
 
     // Store session in Redis for 1 hour
-    $redis->setex(
-        'session:' . $sessionToken,
-        3600,
-        json_encode([
-            'user_id' => $user['id'],
-            'username' => $user['username'],
-            'email' => $user['email']
-        ])
-    );
+     $redis = new Client([
+    'scheme' => 'tcp',
+    'host'   => $_ENV['REDIS_HOST'] ?? '127.0.0.1',
+    'port'   => $_ENV['REDIS_PORT'] ?? 6379,
+    'password' => $_ENV['REDIS_PASSWORD'] ?? null
+]);
 
     setcookie(
     'session_token',
