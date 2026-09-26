@@ -1,7 +1,7 @@
 FROM dunglas/frankenphp:php8.4.26-trixie
 
 # Install required PHP extensions
-RUN install-php-extensions mongodb redis
+RUN install-php-extensions mongodb redis zip
 
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
